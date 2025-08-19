@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler } from 'express';
 import { AppError } from '../utils/apperror';
+import { MongooseError } from 'mongoose';
 
 const errorHandler: ErrorRequestHandler = (error, request, response, next) => {
   console.error(`[ERROR]: ${error}`);
@@ -10,6 +11,10 @@ const errorHandler: ErrorRequestHandler = (error, request, response, next) => {
       message,
       errorCode,
     });
+  }
+
+  if (error instanceof MongooseError) {
+    console.log('mongoose error: ', error);
   }
 };
 

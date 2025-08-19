@@ -5,13 +5,13 @@ import type { UserDocument } from '../models/User';
 import type { SessionDocument } from '../models/Session';
 
 type AccessTokenPayload = {
-  userId: UserDocument['_id'];
-  sessionId: SessionDocument['_id'];
+  userId: UserDocument['id'];
+  sessionId: SessionDocument['id'];
   tokenType: 'access' | 'refresh';
 };
 
 type RefreshTokenPayload = {
-  sessionId: SessionDocument['_id'];
+  sessionId: SessionDocument['id'];
   tokenType: 'access' | 'refresh';
 };
 

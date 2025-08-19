@@ -42,18 +42,18 @@ export const login = async ({ password, email, userAgent }: LoginPayload) => {
   const session = await Session.create({
     userAgent,
     expiresAt: fiveDaysFromNow(),
-    userId: user._id,
+    userId: user.id,
   });
-  appAssert(session, INTERNAL_SERVER_ERROR, 'An error occured');
+  appAssert(session, INTERNAL_SERVER_ERROR, 'An error occurred');
 
   // sign tokens
   const refreshToken = signToken(
-    { sessionId: session._id, tokenType: 'refresh' },
+    { sessionId: session.id, tokenType: 'refresh' },
     refreshTokenSignOptions
   );
   const accessToken = signToken({
-    userId: user._id,
-    sessionId: session._id,
+    userId: user.id,
+    sessionId: session.id,
     tokenType: 'access',
   });
 
@@ -65,7 +65,7 @@ export const logout = async (accessToken: string) => {
   if ('error' in result) {
     appAssert(false, UNAUTHORIZED, 'Logout error');
   }
-  await Session.findOneAndDelete({ _id: result.payload.sessionId });
+  await Session.findOneAndDelete({ id: result.payload.sessionId });
 };
 
 export const refresh = async (refreshToken: string) => {
@@ -78,7 +78,7 @@ export const refresh = async (refreshToken: string) => {
   }
   const { payload } = result;
 
-  const session = await Session.findOne({ _id: payload.sessionId });
+  const session = await Session.findOne({ id: payload.sessionId });
   appAssert(
     session && session.expiresAt.getTime() > Date.now(),
     UNAUTHORIZED,
@@ -94,12 +94,12 @@ export const refresh = async (refreshToken: string) => {
 
   // Update refresh token span along with session span
   const newRefreshToken = shouldExtendSession(session.expiresAt)
-    ? signToken({ sessionId: session._id, tokenType: 'refresh' })
+    ? signToken({ sessionId: session.id, tokenType: 'refresh' })
     : undefined;
 
   const accessToken = signToken({
     userId: session.userId,
-    sessionId: session._id,
+    sessionId: session.id,
     tokenType: 'access',
   });
 

@@ -1,20 +1,23 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
+import { v4 as uuid4 } from 'uuid';
 
 export interface UserDocument extends Document {
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
   password: string;
-  link: mongoose.Types.ObjectId[];
+  links: string[];
 }
 
 const userSchema = new Schema<UserDocument>(
   {
+    id: { type: String, unique: true, required: true, default: uuid4 },
     email: { type: String, required: true, unique: true, index: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     password: { type: String, required: true },
-    link: [{ type: Schema.Types.ObjectId, ref: 'Link', default: [] }],
+    links: [{ type: String, default: [] }],
   },
   { timestamps: true }
 );

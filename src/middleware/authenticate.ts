@@ -1,9 +1,9 @@
-import { NOT_FOUND, OK, UNAUTHORIZED } from '../constants/httpStatusCode';
+import { UNAUTHORIZED } from '../constants/httpStatusCode';
 import Session from '../models/Session';
 import { appAssert, AppError, ErrorCode } from '../utils/apperror';
 import asyncHandler from '../utils/asyncHandler';
-import { clearAuthCookies } from '../utils/cookie.js';
-import { verifyToken } from '../utils/jwt.js';
+import { clearAuthCookies } from '../utils/cookie';
+import { verifyToken } from '../utils/jwt';
 
 export const authenticate = asyncHandler(async (req, res, next) => {
   const accessToken: string = req.cookies.accessToken;
@@ -24,7 +24,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
 
   const { userId, sessionId } = result.payload;
 
-  const session = await Session.exists({ _id: sessionId });
+  const session = await Session.exists({ id: sessionId });
   if (!session) {
     clearAuthCookies(res);
     throw new AppError(

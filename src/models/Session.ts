@@ -1,16 +1,18 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
-import { truncate } from 'node:fs';
+import { v4 as uuid4 } from 'uuid';
 
 export interface SessionDocument extends Document {
-  userId: Types.ObjectId;
+  id: string;
+  userId: string;
   expiresAt: Date;
   userAgent: string;
 }
 
 const sessionModel = new Schema<SessionDocument>(
   {
+    id: { type: String, unique: true, required: true, default: uuid4 },
     userAgent: { type: String, required: true },
-    userId: { type: Schema.Types.ObjectId, required: true, index: true },
+    userId: { type: String, required: true, index: true },
     expiresAt: { type: Date, required: true },
   },
   { timestamps: true }

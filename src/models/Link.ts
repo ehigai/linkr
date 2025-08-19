@@ -1,37 +1,37 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { v4 as uuid4 } from 'uuid';
 
-export interface Redirect {
+export interface RedirectDocument extends Document {
   id: string;
   url: string;
   active: boolean;
 }
 
 export interface LinkDocument extends Document {
+  id: string;
   slug: string;
-  redirects: Redirect[];
+  redirects: string[];
 }
 
-const redirectSchema = new Schema<Redirect>(
-  {
-    id: { type: String, unique: true, required: true, default: uuid4 },
-    url: { type: String, required: true },
-    active: { type: Boolean, required: true, default: true },
-  },
-  { _id: false } // avoids creating _id for each redirect
-);
+const redirectSchema = new Schema<RedirectDocument>({
+  id: { type: String, unique: true, required: true, default: uuid4 },
+  url: { type: String, required: true },
+  active: { type: Boolean, required: true, default: true },
+});
 
 const linkSchema = new Schema<LinkDocument>(
   {
+    id: { type: String, unique: true, required: true, default: uuid4 },
     slug: { type: String, required: true, unique: true, index: true },
-    redirects: { type: [redirectSchema], default: [] }, // typed array
+    redirects: [{ type: String, default: [] }],
   },
   { timestamps: true }
 );
 
-const Link: Model<LinkDocument> = mongoose.model<LinkDocument>(
-  'Link',
-  linkSchema
+export const RedirectLink = mongoose.model<RedirectDocument>(
+  'RedirectLink',
+  redirectSchema
 );
+const Link = mongoose.model<LinkDocument>('Link', linkSchema);
 
 export default Link;

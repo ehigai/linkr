@@ -7,6 +7,8 @@ import errorHandler from './middleware/errorHandler';
 import cookieParser from 'cookie-parser';
 import connectDB from './db';
 import cors from 'cors';
+import linkRouter from './routes/linkRoute';
+import { authenticate } from './middleware/authenticate';
 
 const app = express();
 
@@ -23,6 +25,7 @@ app.get('/api/v1', (req, res, next) => {
 });
 
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/links', authenticate, linkRouter);
 
 app.use(errorHandler);
 
