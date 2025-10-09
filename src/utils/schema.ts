@@ -3,6 +3,7 @@ import z from 'zod';
 const passwordSchema = z.string().min(6).max(255);
 const emailSchema = z.string().min(1).max(255);
 export const slugSchema = z.string().min(3, 'Minimum of 3 characters required');
+export const paramSchema = z.string();
 
 export const loginSchema = z.object({
   email: emailSchema,

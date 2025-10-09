@@ -7,7 +7,7 @@ export interface UserDocument extends Document {
   firstName: string;
   lastName: string;
   password: string;
-  links: string[];
+  links: Types.ObjectId[];
 }
 
 const userSchema = new Schema<UserDocument>(
@@ -17,7 +17,7 @@ const userSchema = new Schema<UserDocument>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     password: { type: String, required: true },
-    links: [{ type: String, default: [] }],
+    links: [{ type: Schema.Types.ObjectId, default: [], ref: 'Link' }],
   },
   { timestamps: true }
 );
