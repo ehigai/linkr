@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign up — linkr</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Roboto, "Segoe UI", Arial; background:#f7fafc; color:#1a202c; display:flex; align-items:center; justify-content:center; height:100vh; }
+      .card { background:white; padding:24px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); width:360px }
+      h1 { margin:0 0 12px 0; font-size:20px }
+      label { display:block; font-size:13px; margin-top:8px }
+      input[type="text"], input[type="email"], input[type="password"] { width:100%; padding:8px 10px; margin-top:6px; border:1px solid #e2e8f0; border-radius:6px }
+      button { width:100%; margin-top:14px; padding:10px; border-radius:6px; border:0; background:#2b6cb0; color:white; font-weight:600 }
+      .muted { font-size:13px; color:#718096; margin-top:8px; text-align:center }
+      .error { color:#c53030; font-size:13px; margin-top:8px }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Create your account</h1>
+      {{#if error}}
+        <div class="error">{{error}}</div>
+      {{/if}}
+      <form method="post" action="/api/v1/auth/register">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required />
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required />
+
+        <button type="submit">Create account</button>
+      </form>
+      <div class="muted">Already have an account? <a href="/login">Sign in</a></div>
+    </div>
+  </body>
+</html>
