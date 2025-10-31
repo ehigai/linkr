@@ -13,6 +13,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    // Log the exception so we can see stack traces in the server output while
+    // developing. This avoids swallowing errors as generic 500 responses.
+    // Keep logging minimal and safe for production.
+    console.error('HTTP Exception caught by filter:', exception);
+
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const message = exception.message;
