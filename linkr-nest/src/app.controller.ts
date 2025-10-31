@@ -13,4 +13,16 @@ export class AppController {
     };
     //return this.appService.landingPage();
   }
+
+  @Get('login')
+  @Render('login')
+  loginPage() {
+    return {};
+  }
+
+  @Get('signup')
+  @Render('signup')
+  signupPage() {
+    return {};
+  }
 }
