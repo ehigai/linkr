@@ -18,7 +18,8 @@ model User {
   email     String   @unique
   firstName String
   lastName  String
-  password  String
+  password  String?
+  googleId  String?  @unique
 
   links     Link[]
   sessions  Session[]
