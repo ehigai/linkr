@@ -7,9 +7,6 @@ export class LoginDto {
   email!: string;
 
   @IsString()
-  userAgent!: string;
-
-  @IsString()
   @MinLength(6)
   @MaxLength(255)
   password!: string;

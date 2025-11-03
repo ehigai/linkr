@@ -12,14 +12,13 @@ type BcryptApi = {
 };
 const bc = bcrypt as unknown as BcryptApi;
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { OauthUserDto } from './dto/oauth-user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
-    private readonly config: ConfigService,
   ) {}
 
   private fiveDaysFromNow() {
@@ -47,8 +46,10 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { email: payload.email },
     });
-    if (!user) throw new UnauthorizedException('Invalid email or password');
-    const isValid = await bc.compare(payload.password, user.password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+    const isValid = await bc.compare(payload.password, user.password as string);
     if (!isValid) throw new UnauthorizedException('Invalid email or password');
 
     const session = await this.prisma.session.create({
@@ -125,5 +126,50 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
+  }
+
+  async handleOAuthUser(googleUser: OauthUserDto) {
+    let dbUser = await this.prisma.user.findUnique({
+      where: { googleId: googleUser.googleId },
+    });
+    if (!dbUser) {
+      dbUser = await this.prisma.user.create({
+        data: {
+          email: googleUser.email,
+          firstName: googleUser.given_name,
+          lastName: googleUser.family_name,
+          googleId: googleUser.googleId,
+        },
+      });
+    } else if (!dbUser.googleId) {
+      await this.prisma.user.update({
+        where: { id: dbUser.id },
+        data: { googleId: googleUser.googleId },
+      });
+    }
+
+    const session = await this.prisma.session.create({
+      data: {
+        userId: dbUser.id,
+        userAgent: 'Google user',
+        expiresAt: this.fiveDaysFromNow(),
+      },
+    });
+    if (!session) throw new InternalServerErrorException('An error occurred');
+
+    const refreshToken = this.jwt.sign(
+      { sessionId: session.id, tokenType: 'refresh' },
+      { expiresIn: '5d' },
+    );
+    const accessToken = this.jwt.sign(
+      { userId: dbUser.id, sessionId: session.id, tokenType: 'access' },
+      { expiresIn: '5m' },
+    );
+    return {
+      accessToken,
+      refreshToken,
+      sessionId: session.id,
+      userId: dbUser.id,
+    };
   }
 }
