@@ -8,21 +8,6 @@ export class AppController {
   @Get()
   @Render('index')
   landingPage() {
-    return {
-      message: 'Welcome to Linkr!',
-    };
-    //return this.appService.landingPage();
-  }
-
-  @Get('login')
-  @Render('login')
-  loginPage() {
-    return {};
-  }
-
-  @Get('signup')
-  @Render('signup')
-  signupPage() {
-    return {};
+    return this.appService.getHello();
   }
 }

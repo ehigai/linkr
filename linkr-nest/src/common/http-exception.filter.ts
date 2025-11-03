@@ -21,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const message = exception.message;
-      response.status(status).json({ message });
+      response.status(status).json({ message, errorCode: exception.name });
       return;
     }
 

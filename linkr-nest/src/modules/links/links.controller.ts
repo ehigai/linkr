@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { LinksService } from './links.service';
-import { AuthGuard } from '@nestjs/passport';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { CreateRedirectionDto } from './dto/create-redirection.dto';
 import { User } from '../../common/decorators/user.decorator';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('api/v1/links')
-@UseGuards(AuthGuard('jwt-cookie'))
 export class LinksController {
   constructor(private readonly links: LinksService) {}
 
